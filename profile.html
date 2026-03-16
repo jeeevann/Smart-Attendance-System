@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Attendance - Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div id="app">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-logo">SA</div>
+                <div class="brand-text">
+                    <strong>Smart</strong>
+                    <span>Attendance</span>
+                </div>
+            </div>
+            <nav class="nav">
+                <a class="nav-link" href="index.html">Home</a>
+                <a class="nav-link" href="attendance.html">Mark Attendance</a>
+                <a class="nav-link" href="records.html">Attendance Records</a>
+                <a class="nav-link active" href="profile.html">Profile</a>
+                <a class="nav-link" href="reports.html">Reports & Analytics</a>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary w-full" id="toggle-theme" aria-label="Toggle dark mode">🌙 Dark Mode</button>
+            </div>
+        </aside>
+
+        <main class="content">
+            <header class="topbar">
+                <h1 class="page-title">Profile</h1>
+            </header>
+
+            <section class="grid grid-3 mt-16">
+                <div class="card profile-card">
+                    <div class="avatar-ring">
+                        <img src="https://i.pravatar.cc/200" alt="Profile" />
+                    </div>
+                    <h3 class="name">Aarav Patel</h3>
+                    <p class="muted">EMP-001 • IT Department</p>
+                    <div class="profile-quick mt-16">
+                        <div>
+                            <div class="label">Attendance %</div>
+                            <div class="value">94%</div>
+                        </div>
+                        <div>
+                            <div class="label">Last Login</div>
+                            <div class="value">09:05 AM</div>
+                        </div>
+                        <div>
+                            <div class="label">Monthly Present</div>
+                            <div class="value">20/22</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card col-span-2">
+                    <h3 class="section-title">Monthly Attendance</h3>
+                    <div class="chart-placeholder shimmer" style="height: 280px"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="main.js"></script>
+</body>
+</html>
+
+

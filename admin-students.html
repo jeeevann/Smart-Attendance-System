@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Attendance - Manage Students</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div id="app" data-role-guard="Admin">
+        <aside class="sidebar admin-accent">
+            <div class="brand">
+                <div class="brand-logo">SA</div>
+                <div class="brand-text">
+                    <strong>Smart</strong>
+                    <span>Attendance</span>
+                </div>
+            </div>
+            <nav class="nav">
+                <a class="nav-link" href="admin.html">Dashboard</a>
+                <a class="nav-link active" href="admin-students.html">Manage Students</a>
+                <a class="nav-link" href="admin-teachers.html">Manage Teachers</a>
+                <a class="nav-link" href="records.html">Attendance Records</a>
+                <button class="btn mt-16" id="logout">Logout</button>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary w-full" id="toggle-theme" aria-label="Toggle dark mode">🌙 Dark Mode</button>
+            </div>
+        </aside>
+
+        <main class="content">
+            <header class="topbar">
+                <h1 class="page-title">Manage Students</h1>
+            </header>
+
+            <section class="card">
+                <form id="student-form" class="student-form" enctype="multipart/form-data">
+                    <input class="input" placeholder="Full Name" id="s-name" required />
+                    <input class="input" placeholder="Email" type="email" id="s-email" required />
+                    <input class="input" placeholder="Phone" id="s-phone" />
+                    <input class="input" placeholder="Roll No." id="s-roll" required />
+                    <input class="input" placeholder="Class" id="s-class" required />
+                    <input class="input" placeholder="Year" id="s-year" required />
+                    <input class="input" placeholder="Division" id="s-division" required />
+                    <input class="input" placeholder="Section" id="s-section" />
+                    <input class="input" placeholder="Department" id="s-dept" />
+                    <div class="col-span-2" style="display:flex;align-items:center;gap:12px">
+                        <div class="preview" id="student-preview">Upload 2-3 clear images</div>
+                        <button type="button" class="btn" id="s-upload-btn">Upload Photos</button>
+                        <input class="input" type="file" accept="image/*" id="s-photos" multiple />
+                    </div>
+                    <div class="col-span-2" style="display:flex;gap:10px;flex-wrap:wrap">
+                        <button class="btn btn-primary" type="submit">Save Student</button>
+                    </div>
+                </form>
+                <div class="table-wrapper mt-16">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Roll</th>
+                                <th>Class</th>
+                                <th>Section</th>
+                                <th>Department</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="students-body"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="api.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
+
+

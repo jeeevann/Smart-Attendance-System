@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Attendance - Sign Up</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <main class="auth">
+        <div class="auth-panel">
+            <div class="logo-ring sm">
+                <div class="logo">SA</div>
+            </div>
+            <h2 class="auth-title">Create Account</h2>
+            <p class="muted">Sign up to get started</p>
+
+            <form class="auth-form" id="signup-form">
+                <label class="label">Full Name</label>
+                <input type="text" class="input" id="s-name" placeholder="Your name" required />
+
+                <label class="label">Email</label>
+                <input type="email" class="input" id="s-email" placeholder="you@example.com" required />
+
+                <label class="label">Password</label>
+                <input type="password" class="input" id="s-password" placeholder="••••••••" required />
+
+                <label class="label">Role</label>
+                <select class="input" id="s-role" required>
+                    <option value="Teacher" selected>Teacher</option>
+                    <option value="Admin">Admin</option>
+                </select>
+
+                <button class="btn btn-primary btn-xl mt-16 w-full" type="submit">Create Account</button>
+            </form>
+            <p class="muted mt-16" style="text-align:center">Already have an account? <a href="login.html" class="nav-link" style="display:inline;padding:0">Sign in</a></p>
+        </div>
+    </main>
+
+    <div id="toast-container"></div>
+    <script src="main.js"></script>
+</body>
+</html>
+
+

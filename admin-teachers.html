@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Attendance - Manage Teachers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div id="app" data-role-guard="Admin">
+        <aside class="sidebar admin-accent">
+            <div class="brand">
+                <div class="brand-logo">SA</div>
+                <div class="brand-text">
+                    <strong>Smart</strong>
+                    <span>Attendance</span>
+                </div>
+            </div>
+            <nav class="nav">
+                <a class="nav-link" href="admin.html">Dashboard</a>
+                <a class="nav-link active" href="admin-teachers.html">Manage Teachers</a>
+                <button class="btn mt-16" id="logout">Logout</button>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary w-full" id="toggle-theme" aria-label="Toggle dark mode">🌙 Dark Mode</button>
+            </div>
+        </aside>
+
+        <main class="content">
+            <header class="topbar">
+                <h1 class="page-title">Manage Teachers</h1>
+            </header>
+
+            <section class="card">
+                <form id="teacher-form" class="teacher-form">
+                    <input class="input" placeholder="Full Name" id="t-name" required />
+                    <input class="input" placeholder="Email" type="email" id="t-email" required />
+                    <input class="input" placeholder="Password" type="text" id="t-password" required />
+                    <input class="input" placeholder="Phone" id="t-phone" />
+                    <input class="input" placeholder="Department" id="t-dept" required />
+                    <input class="input" placeholder="Employee ID" id="t-empid" />
+                    <input class="input" placeholder="Designation" id="t-title" />
+                    <button class="btn btn-primary" type="submit">Save Teacher</button>
+                </form>
+                <div class="table-wrapper mt-16">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Phone</th>
+                                <th>Emp ID</th>
+                                <th>Designation</th>
+                                <th>Created At</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teachers-body"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="api.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
+
+

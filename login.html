@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Attendance - Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <main class="auth">
+        <div class="auth-panel">
+            <div class="logo-ring sm">
+                <div class="logo">SA</div>
+            </div>
+            <h2 class="auth-title">Welcome Back</h2>
+            <p class="muted">Sign in to continue</p>
+
+            <form class="auth-form" id="login-form">
+                <label class="label">Email</label>
+                <input type="email" class="input" id="email" placeholder="you@example.com" required />
+
+                <label class="label">Password</label>
+                <input type="password" class="input" id="password" placeholder="••••••••" required />
+
+                <label class="label">Role</label>
+                <select class="input" id="role" required>
+                    <option value="Teacher">Teacher</option>
+                    <option value="Admin">Admin</option>
+                </select>
+
+                <button class="btn btn-primary btn-xl mt-16 w-full" type="submit">Sign In</button>
+            </form>
+
+            <!-- Signup removed: accounts are created by admin -->
+        </div>
+    </main>
+
+    <div id="toast-container"></div>
+    <script src="api.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
+
+

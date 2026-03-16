@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Attendance - Teacher Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div id="app" data-role-guard="Teacher">
+        <!-- Navigation Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-logo">SA</div>
+                <div class="brand-text">
+                    <strong>Smart</strong>
+                    <span>Attendance</span>
+                </div>
+            </div>
+            <nav class="nav">
+                <a class="nav-link active" href="#" data-section="dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a class="nav-link" href="#" data-section="manage-students">
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-text">Manage Students</span>
+                </a>
+                <a class="nav-link" href="#" data-section="take-attendance">
+                    <span class="nav-icon">📷</span>
+                    <span class="nav-text">Take Attendance</span>
+                </a>
+                <!-- <a class="nav-link" href="#" data-section="attendance-reports">
+                    <span class="nav-icon">📈</span>
+                    <span class="nav-text">Attendance Reports</span>
+                </a> -->
+                <button class="btn mt-16" id="logout">Logout</button>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary w-full" id="toggle-theme" aria-label="Toggle dark mode">🌙 Dark Mode</button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="content">
+            <header class="topbar">
+                <h1 class="page-title" id="page-title">Dashboard</h1>
+                <div class="topbar-right">
+                    <div class="datetime" id="datetime"></div>
+                </div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section active">
+                <div class="card">
+                    <h3 class="section-title">Quick Actions</h3>
+                    <div class="grid grid-2">
+                        <button class="btn btn-primary btn-xl" data-section="take-attendance">
+                            <span class="btn-icon">📷</span>
+                            <span>Start Attendance</span>
+                        </button>
+                        <button class="btn btn-secondary btn-xl" data-section="manage-students">
+                            <span class="btn-icon">👥</span>
+                            <span>Manage Students</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Recent Activity</h3>
+                    <ul id="recentActivityList" class="activity-list"></ul>
+                  </div>
+                  
+                <!-- <div class="card mt-16">
+                    <h3 class="section-title">Recent Activity</h3>
+                    <div class="activity-list" id="recent-activity">
+                        <div class="activity-item">
+                            <span class="activity-time">10:30 AM</span>
+                            <span class="activity-text">Marked attendance for Computer FY A</span>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">09:15 AM</span>
+                            <span class="activity-text">Added new student: John Doe</span>
+                        </div>
+                    </div>
+                </div> -->
+            </section>
+
+            <!-- Manage Students Section -->
+            <section id="manage-students-section" class="content-section">
+                <!-- Add Student Form -->
+                <div class="card">
+                    <h3 class="section-title">Add New Student</h3>
+                    <form id="add-student-form" class="student-form" enctype="multipart/form-data">
+                        <input class="input" placeholder="Full Name" id="student-name" required />
+                        <input class="input" placeholder="Roll No" id="student-id" required />
+                        <input class="input" placeholder="Email" type="email" id="student-email" />
+                        <input class="input" placeholder="Phone" id="student-phone" />
+                        <select class="input" id="student-department" required>
+                            <option value="">Select Department</option>
+                            <option>Computer</option>
+                            <option>IT</option>
+                            <option>Civil</option>
+                            <option>ECS</option>
+                            <option>DS</option>
+                        </select>
+                        <select class="input" id="student-year" required>
+                            <option value="">Select Year</option>
+                            <option>FY</option>
+                            <option>SY</option>
+                            <option>TY</option>
+                            <option>BE</option>
+                        </select>
+                        <select class="input" id="student-division" required>
+                            <option value="">Select Division</option>
+                            <option>A</option>
+                            <option>B</option>
+                        </select>
+                        <div class="col-span-2">
+                            <div class="photo-upload-section">
+                                <div class="photo-upload-area" id="photo-upload-area">
+                                    <div class="upload-icon">📷</div>
+                                    <div class="upload-text">Upload Photos</div>
+                                    <div class="upload-instruction">Please upload 2-3 clear photos</div>
+                                    <button type="button" class="btn" id="upload-photos-btn">Upload Images</button>
+                                    <input type="file" id="student-photos" accept="image/*" multiple style="display: none;" />
+                                </div>
+                                <div class="photo-preview" id="photo-preview"></div>
+                            </div>
+                        </div>
+                        <div class="col-span-2 form-actions">
+                            <button class="btn btn-primary" type="submit">Save Student</button>
+                            <button class="btn btn-secondary" type="button" id="cancel-add">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Search and Filters -->
+                <div class="card mt-16">
+                    <h3 class="section-title">Student Management</h3>
+                    <div class="filters">
+                        <input class="input" placeholder="Search by name or ID..." id="student-search" />
+                        <select class="input" id="filter-department">
+                            <option value="">All Departments</option>
+                            <option>Computer</option>
+                            <option>IT</option>
+                            <option>Civil</option>
+                            <option>ECS</option>
+                            <option>DS</option>
+                        </select>
+                        <select class="input" id="filter-year">
+                            <option value="">All Years</option>
+                            <option>FY</option>
+                            <option>SY</option>
+                            <option>TY</option>
+                            <option>BE</option>
+                        </select>
+                        <select class="input" id="filter-division">
+                            <option value="">All Divisions</option>
+                            <option>A</option>
+                            <option>B</option>
+                        </select>
+                        <button class="btn" id="apply-filters">Apply Filters</button>
+                    </div>
+                </div>
+
+                <!-- Student Table -->
+                <div class="card mt-16">
+                    <h3 class="section-title">Student List</h3>
+                    <div class="table-wrapper">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Photo</th>
+                                    <th>Name</th>
+                                    <th>Roll No</th>
+                                    <th>Department</th>
+                                    <th>Year</th>
+                                    <th>Division</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="students-table-body">
+                                <!-- Student rows will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Take Attendance Section -->
+            <section id="take-attendance-section" class="content-section">
+                <!-- Lecture Selection -->
+                <div class="card">
+                    <h3 class="section-title">Lecture Selection</h3>
+                    <div class="filters">
+                        <select class="input" id="lecture-class">
+                            <option value="">Select Department</option>
+                            <option>Computer</option>
+                            <option>IT</option>
+                            <option>Civil</option>
+                            <option>ECS</option>
+                            <option>DS</option>
+                        </select>
+                        <select class="input" id="lecture-year">
+                            <option value="">Select Year</option>
+                            <option>FY</option>
+                            <option>SY</option>
+                            <option>TY</option>
+                            <option>BE</option>
+                        </select>
+                        <select class="input" id="lecture-division">
+                            <option value="">Select Division</option>
+                            <option>A</option>
+                            <option>B</option>
+                        </select>
+                        <input class="input" placeholder="Subject" id="lecture-subject" />
+                        <select class="input" id="lecture-time-slot">
+                            <option value="">Select Time Slot</option>
+                            <option>9:00 - 10:00</option>
+                            <option>10:00 - 11:00</option>
+                            <option>11:00 - 12:00</option>
+                            <option>12:00 - 1:00</option>
+                            <option>2:00 - 3:00</option>
+                            <option>3:00 - 4:00</option>
+                        </select>
+                        <button class="btn btn-primary btn-xl" id="start-attendance" onclick="handleStartAttendance()">Start Attendance</button>
+                    </div>
+                </div>
+
+                <!-- Live Camera Feed -->
+                <div class="attendance-container" id="attendance-container" style="display: none;">
+                    <div class="camera-section">
+                        <div class="camera-frame">
+                            <video id="attendance-video" autoplay playsinline></video>
+                            <div class="face-outline glow" id="attendance-face-outline"></div>
+                            <div class="recognition-overlay" id="recognition-overlay"></div>
+                        </div>
+                        <div class="camera-controls">
+                            <button class="btn btn-danger" id="stop-attendance">Stop Attendance</button>
+                        </div>
+                    </div>
+
+                    <!-- Real-Time Log -->
+                    <div class="attendance-log">
+                        <h4 class="log-title">Attendance Log</h4>
+                        <div class="log-container" id="attendance-log">
+                            <div class="log-item">
+                                <span class="log-time">10:05 AM</span>
+                                <span class="log-text">Waiting for students...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Attendance Reports Section -->
+            <section id="attendance-reports-section" class="content-section">
+                <!-- Filter Controls -->
+                <div class="card">
+                    <h3 class="section-title">Report Filters</h3>
+                    <div class="filters">
+                        <select class="input" id="report-class">
+                            <option value="">All Departments</option>
+                            <option>Computer</option>
+                            <option>IT</option>
+                            <option>Civil</option>
+                            <option>ECS</option>
+                            <option>DS</option>
+                        </select>
+                        <select class="input" id="report-year">
+                            <option value="">All Years</option>
+                            <option>FY</option>
+                            <option>SY</option>
+                            <option>TY</option>
+                            <option>BE</option>
+                        </select>
+                        <select class="input" id="report-division">
+                            <option value="">All Divisions</option>
+                            <option>A</option>
+                            <option>B</option>
+                        </select>
+                        <input class="input" type="date" id="report-date" />
+                        <input class="input" type="date" id="report-date-end" placeholder="End Date" />
+                        <button class="btn btn-primary" id="generate-report">Generate Report</button>
+                        <button class="btn btn-secondary" id="download-report">Download Report</button>
+                    </div>
+                </div>
+
+                <!-- Summary Metrics -->
+                <div class="card mt-16">
+                    <h3 class="section-title">Summary</h3>
+                    <div class="grid grid-3">
+                        <div class="stat-card success">
+                            <div class="stat-label">Total Present</div>
+                            <div class="stat-value" id="total-present">0</div>
+                        </div>
+                        <div class="stat-card danger">
+                            <div class="stat-label">Total Absent</div>
+                            <div class="stat-value" id="total-absent">0</div>
+                        </div>
+                        <div class="stat-card info">
+                            <div class="stat-label">Attendance %</div>
+                            <div class="stat-value" id="attendance-percentage">0%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendance Table -->
+                <div class="card mt-16">
+                    <h3 class="section-title">Attendance Records</h3>
+                    <div class="table-wrapper">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Student Name</th>
+                                    <th>Class</th>
+                                    <th>Year</th>
+                                    <th>Division</th>
+                                    <th>Subject</th>
+                                    <th>Time Slot</th>
+                                    <th>Status</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reports-table-body">
+                                <!-- Report rows will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="api.js"></script>
+    <script src="main.js"></script>
+    <script src="teacher-dashboard-fixed.js"></script>
+</body>
+</html>

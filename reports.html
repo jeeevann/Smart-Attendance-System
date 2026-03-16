@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Attendance - Reports</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div id="app">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-logo">SA</div>
+                <div class="brand-text">
+                    <strong>Smart</strong>
+                    <span>Attendance</span>
+                </div>
+            </div>
+            <nav class="nav">
+                <a class="nav-link" href="index.html">Home</a>
+                <a class="nav-link" href="attendance.html">Mark Attendance</a>
+                <a class="nav-link" href="records.html">Attendance Records</a>
+                <a class="nav-link" href="profile.html">Profile</a>
+                <a class="nav-link active" href="reports.html">Reports & Analytics</a>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary w-full" id="toggle-theme" aria-label="Toggle dark mode">🌙 Dark Mode</button>
+            </div>
+        </aside>
+
+        <main class="content">
+            <header class="topbar">
+                <h1 class="page-title">Reports & Analytics</h1>
+            </header>
+
+            <section class="grid grid-2 mt-16">
+                <div class="card">
+                    <h3 class="section-title">Monthly Trend</h3>
+                    <div class="chart-placeholder shimmer" style="height: 240px"></div>
+                </div>
+                <div class="card">
+                    <h3 class="section-title">Weekly Trend</h3>
+                    <div class="chart-placeholder shimmer" style="height: 240px"></div>
+                </div>
+                <div class="card col-span-2">
+                    <h3 class="section-title">Attendance Heatmap</h3>
+                    <div class="heatmap">
+                        <div class="heatmap-grid" id="heatmap"></div>
+                        <div class="heatmap-legend">
+                            <span>Low</span>
+                            <div class="legend-bar"></div>
+                            <span>High</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="main.js"></script>
+</body>
+</html>
+
+

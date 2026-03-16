@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Admin Dashboard APIs</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f7fa;
+        }
+        .test-card {
+            background: white;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            background: #ecf0f1;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success { background: #d4edda; border-left: 4px solid #28a745; }
+        .error { background: #f8d7da; border-left: 4px solid #dc3545; }
+        .info { background: #d1ecf1; border-left: 4px solid #17a2b8; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #3498db;
+            color: white;
+            font-weight: 600;
+        }
+        tr:hover {
+            background: #f8f9fa;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .badge-success { background: #28a745; color: white; }
+        .badge-info { background: #17a2b8; color: white; }
+    </style>
+</head>
+<body>
+    <h1>🎓 Admin Dashboard API Test</h1>
+
+    <div class="test-card">
+        <h2>📊 Statistics API Test</h2>
+        <p>This tests the <code>admin_stats.php</code> endpoint that provides dashboard statistics.</p>
+        <button onclick="testStats()">🔄 Load Statistics</button>
+        
+        <div id="stats-display" style="display:none;">
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-label">Total Teachers</div>
+                    <div class="stat-value" id="stat-teachers">-</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Total Students</div>
+                    <div class="stat-value" id="stat-students">-</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Total Classes</div>
+                    <div class="stat-value" id="stat-classes">-</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="result-stats" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-card">
+        <h2>👥 Teachers List API Test</h2>
+        <p>This tests the <code>teachers.php</code> endpoint (GET method) for fetching all teachers.</p>
+        <button onclick="testTeachers()">🔄 Load Teachers</button>
+        
+        <div id="teachers-display" style="display:none;">
+            <table id="teachers-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="teachers-tbody"></tbody>
+            </table>
+        </div>
+        
+        <div id="result-teachers" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-card">
+        <h2>🎯 Complete Dashboard Test</h2>
+        <p>This simulates the full admin dashboard load (stats + teachers table).</p>
+        <button onclick="testCompleteDashboard()">🚀 Load Complete Dashboard</button>
+        <div id="result-complete" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-card">
+        <h2>📝 Instructions</h2>
+        <ol>
+            <li>Make sure <strong>Apache and MySQL</strong> are running in XAMPP</li>
+            <li>Make sure you have added at least one teacher via admin panel</li>
+            <li>Click the test buttons above to verify the APIs</li>
+            <li>If successful, open the actual admin dashboard: <br>
+                <a href="login.html" target="_blank">Login as Admin</a> (admin@1 / admin123)
+            </li>
+        </ol>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://localhost/Mini-Project/FaceRecognition';
+
+        async function testStats() {
+            const resultDiv = document.getElementById('result-stats');
+            const statsDisplay = document.getElementById('stats-display');
+            
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.textContent = '⏳ Loading statistics...';
+
+            try {
+                const response = await fetch(`${BASE_URL}/admin_stats.php`);
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update stats display
+                    document.getElementById('stat-teachers').textContent = data.teachers || 0;
+                    document.getElementById('stat-students').textContent = data.students || 0;
+                    document.getElementById('stat-classes').textContent = data.classes || 0;
+                    statsDisplay.style.display = 'block';
+
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ SUCCESS!\n\nResponse:\n${JSON.stringify(data, null, 2)}\n\nStatistics loaded successfully!`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ API returned success: false\n\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ ERROR\n\n${error.message}\n\nMake sure Apache and MySQL are running!`;
+            }
+        }
+
+        async function testTeachers() {
+            const resultDiv = document.getElementById('result-teachers');
+            const teachersDisplay = document.getElementById('teachers-display');
+            const tbody = document.getElementById('teachers-tbody');
+            
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.textContent = '⏳ Loading teachers...';
+
+            try {
+                const response = await fetch(`${BASE_URL}/teachers.php`);
+                const teachers = await response.json();
+
+                if (Array.isArray(teachers)) {
+                    // Update table
+                    tbody.innerHTML = '';
+                    
+                    if (teachers.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;">No teachers found. Add teachers first!</td></tr>';
+                    } else {
+                        teachers.forEach(t => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td><strong>${t.name || 'N/A'}</strong></td>
+                                <td>${t.email || 'N/A'}</td>
+                                <td>${t.department || 'N/A'}</td>
+                                <td>${t.phone || '-'}</td>
+                                <td><span class="badge badge-success">Active</span></td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                    }
+                    
+                    teachersDisplay.style.display = 'block';
+
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ SUCCESS!\n\nFound ${teachers.length} teacher(s)\n\nRaw Response:\n${JSON.stringify(teachers, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ Unexpected response format\n\n${JSON.stringify(teachers, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ ERROR\n\n${error.message}\n\nMake sure Apache and MySQL are running!`;
+            }
+        }
+
+        async function testCompleteDashboard() {
+            const resultDiv = document.getElementById('result-complete');
+            
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result info';
+            resultDiv.textContent = '⏳ Loading complete dashboard...\n\n';
+
+            let output = '';
+
+            try {
+                // Test 1: Load stats
+                output += '📊 Loading statistics...\n';
+                const statsResponse = await fetch(`${BASE_URL}/admin_stats.php`);
+                const statsData = await statsResponse.json();
+                
+                if (statsData.success) {
+                    output += `✅ Stats loaded: ${statsData.teachers} teachers, ${statsData.students} students, ${statsData.classes} classes\n\n`;
+                } else {
+                    output += `❌ Stats failed\n\n`;
+                }
+
+                // Test 2: Load teachers
+                output += '👥 Loading teachers list...\n';
+                const teachersResponse = await fetch(`${BASE_URL}/teachers.php`);
+                const teachersData = await teachersResponse.json();
+                
+                if (Array.isArray(teachersData)) {
+                    output += `✅ Teachers loaded: ${teachersData.length} record(s)\n\n`;
+                } else {
+                    output += `❌ Teachers failed\n\n`;
+                }
+
+                output += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+                output += '✅ DASHBOARD TEST COMPLETE!\n';
+                output += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n';
+                output += 'The admin dashboard should now work correctly.\n';
+                output += 'Login as Admin to see the live dashboard:\n';
+                output += `${BASE_URL}/login.html`;
+
+                resultDiv.className = 'result success';
+                resultDiv.textContent = output;
+
+                // Also trigger the visual tests
+                await testStats();
+                await testTeachers();
+
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ ERROR\n\n${error.message}\n\n${output}`;
+            }
+        }
+
+        // Auto-run on page load
+        window.addEventListener('load', () => {
+            console.log('Admin Dashboard Test Page loaded');
+            console.log('Ready to test APIs!');
+        });
+    </script>
+</body>
+</html>

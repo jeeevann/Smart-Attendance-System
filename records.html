@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Attendance - Records</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div id="app">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-logo">SA</div>
+                <div class="brand-text">
+                    <strong>Smart</strong>
+                    <span>Attendance</span>
+                </div>
+            </div>
+            <nav class="nav">
+                <a class="nav-link" href="home.html">Home</a>
+                <a class="nav-link" href="attendance.html">Mark Attendance</a>
+                <a class="nav-link active" href="records.html">Attendance Records</a>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary w-full" id="toggle-theme" aria-label="Toggle dark mode">🌙 Dark Mode</button>
+            </div>
+        </aside>
+
+        <main class="content">
+            <header class="topbar">
+                <h1 class="page-title">Attendance Records</h1>
+                <div class="actions">
+                    <button class="btn">Export PDF</button>
+                    <button class="btn">Export Excel</button>
+                </div>
+            </header>
+
+            <section class="card">
+                <div class="filters">
+                    <input type="date" class="input" id="r-date" />
+                    <input type="text" class="input" id="r-class" placeholder="Class" />
+                    <input type="text" class="input" id="r-year" placeholder="Year" />
+                    <input type="text" class="input" id="r-division" placeholder="Division" />
+                    <input type="text" class="input" id="r-student" placeholder="Student name or ID" />
+                    <button class="btn btn-primary" id="r-apply">Filter</button>
+                </div>
+
+                <div class="table-wrapper mt-16">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Student</th>
+                                <th>Class</th>
+                                <th>Year</th>
+                                <th>Division</th>
+                                <th>Subject</th>
+                                <th>Time Slot</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="records-body"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="main.js"></script>
+</body>
+</html>
+
+

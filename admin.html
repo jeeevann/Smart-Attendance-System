@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Attendance - Admin Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div id="app" data-role-guard="Admin">
+        <aside class="sidebar admin-accent">
+            <div class="brand">
+                <div class="brand-logo">SA</div>
+                <div class="brand-text">
+                    <strong>Smart</strong>
+                    <span>Attendance</span>
+                </div>
+            </div>
+            <nav class="nav">
+                <a class="nav-link active" href="admin.html">Dashboard</a>
+                <a class="nav-link" href="admin-teachers.html">Manage Teachers</a>
+                <button class="btn mt-16" id="logout">Logout</button>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary w-full" id="toggle-theme" aria-label="Toggle dark mode">🌙 Dark Mode</button>
+            </div>
+        </aside>
+
+        <main class="content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <h1 class="page-title">Admin Dashboard</h1>
+                </div>
+                <div class="topbar-right"></div>
+            </header>
+
+            <section class="grid grid-3 mt-16">
+                <div class="card stat-card">
+                    <div class="stat-label">Total Teachers</div>
+                    <div class="stat-value" id="stat-teachers">-</div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-label">Total Students</div>
+                    <div class="stat-value" id="stat-students">-</div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-label">Total Classes</div>
+                    <div class="stat-value" id="stat-classes">-</div>
+                </div>
+            </section>
+
+            <section class="card mt-24">
+                <h3 class="section-title">All Teachers</h3>
+                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                    <input class="input" id="t-search" placeholder="Search by name/email/department" style="max-width:360px" />
+                    <select class="input" id="t-sort">
+                        <option value="created_at|desc">Newest</option>
+                        <option value="created_at|asc">Oldest</option>
+                        <option value="name|asc">Name A-Z</option>
+                        <option value="name|desc">Name Z-A</option>
+                        <option value="department|asc">Dept A-Z</option>
+                        <option value="department|desc">Dept Z-A</option>
+                    </select>
+                </div>
+                <div class="table-wrapper mt-16">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Phone</th>
+                                <th>Emp ID</th>
+                                <th>Designation</th>
+                                <th>Created At</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teachers-body"></tbody>
+                    </table>
+                    <div class="mt-12" style="display:flex;gap:8px;align-items:center;justify-content:flex-end">
+                        <button class="btn" id="t-prev">Prev</button>
+                        <span id="t-page" class="muted">1</span>
+                        <button class="btn" id="t-next">Next</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Manage Teachers moved to a separate page (admin-teachers.html) -->
+
+            
+        </main>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="api.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
+
+

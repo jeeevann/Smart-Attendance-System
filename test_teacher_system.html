@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Teacher Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 0; }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #45a049; }
+        button.danger { background: #f44336; }
+        button.danger:hover { background: #da190b; }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 4px;
+            background: #f0f0f0;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f9f9f9;
+            border-left: 3px solid #4CAF50;
+        }
+        .code {
+            background: #f4f4f4;
+            padding: 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Teacher Management System Test</h1>
+    
+    <div class="test-section">
+        <h2>📝 System Requirements</h2>
+        <div class="step">✅ Apache server running</div>
+        <div class="step">✅ MySQL server running</div>
+        <div class="step">✅ Database: smart_attendance</div>
+        <div class="step">✅ Table: teachers (auto-created)</div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔧 Test 1: Add a Teacher (Admin Function)</h2>
+        <p>This simulates an admin adding a new teacher to the system.</p>
+        <button onclick="testAddTeacher()">Run Test: Add Teacher</button>
+        <div id="result1" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔐 Test 2: Teacher Login</h2>
+        <p>This simulates a teacher logging in with the credentials created above.</p>
+        <button onclick="testTeacherLogin()">Run Test: Teacher Login</button>
+        <div id="result2" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📋 Test 3: Get All Teachers</h2>
+        <p>This retrieves the list of all teachers from the database.</p>
+        <button onclick="testGetTeachers()">Run Test: Get Teachers</button>
+        <div id="result3" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📚 Manual Testing Steps</h2>
+        <div class="step">
+            <strong>Step 1:</strong> Login as Admin<br>
+            <span class="code">URL: http://localhost/Mini-Project/FaceRecognition/login.html<br>
+            Email: admin@1 | Password: admin123 | Role: Admin</span>
+        </div>
+        <div class="step">
+            <strong>Step 2:</strong> Navigate to Manage Teachers<br>
+            <span class="code">Click "Manage Teachers" in sidebar</span>
+        </div>
+        <div class="step">
+            <strong>Step 3:</strong> Add a Teacher<br>
+            <span class="code">Fill form → Click "Save Teacher"</span>
+        </div>
+        <div class="step">
+            <strong>Step 4:</strong> Logout and Login as Teacher<br>
+            <span class="code">Use the email/password you created</span>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = 'http://localhost/Mini-Project/FaceRecognition';
+
+        async function testAddTeacher() {
+            const result = document.getElementById('result1');
+            result.style.display = 'block';
+            result.className = 'result info';
+            result.textContent = 'Testing... Please wait...';
+
+            const teacherData = {
+                name: 'Test Teacher ' + Date.now(),
+                email: 'test' + Date.now() + '@test.com',
+                password: 'test123',
+                phone: '',
+                department: 'Computer',
+                employee_id: 'TEST001',
+                designation: 'Assistant Professor'
+            };
+
+            try {
+                const response = await fetch(`${BASE_URL}/teachers.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(teacherData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    result.className = 'result success';
+                    result.textContent = `✅ SUCCESS!\n\nTeacher added to database:\n${JSON.stringify(teacherData, null, 2)}\n\nResponse:\n${JSON.stringify(data, null, 2)}\n\nYou can now login with:\nEmail: ${teacherData.email}\nPassword: ${teacherData.password}\nRole: Teacher`;
+                    
+                    // Save credentials for test 2
+                    window.testCredentials = {
+                        email: teacherData.email,
+                        password: teacherData.password
+                    };
+                } else {
+                    result.className = 'result error';
+                    result.textContent = `❌ FAILED\n\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                result.className = 'result error';
+                result.textContent = `❌ ERROR\n\n${error.message}\n\nMake sure Apache and MySQL are running!`;
+            }
+        }
+
+        async function testTeacherLogin() {
+            const result = document.getElementById('result2');
+            result.style.display = 'block';
+            result.className = 'result info';
+            result.textContent = 'Testing... Please wait...';
+
+            // Use credentials from test 1 if available
+            const credentials = window.testCredentials || {
+                email: 'test@test.com',
+                password: 'test123'
+            };
+
+            const loginData = {
+                email: credentials.email,
+                password: credentials.password,
+                role: 'Teacher'
+            };
+
+            try {
+                const response = await fetch(`${BASE_URL}/login.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(loginData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    result.className = 'result success';
+                    result.textContent = `✅ LOGIN SUCCESS!\n\nLogged in as:\n${JSON.stringify(data.user, null, 2)}\n\nCredentials used:\nEmail: ${credentials.email}\nPassword: ${credentials.password}`;
+                } else {
+                    result.className = 'result error';
+                    result.textContent = `❌ LOGIN FAILED\n\n${JSON.stringify(data, null, 2)}\n\nTry running Test 1 first to create a teacher account.`;
+                }
+            } catch (error) {
+                result.className = 'result error';
+                result.textContent = `❌ ERROR\n\n${error.message}`;
+            }
+        }
+
+        async function testGetTeachers() {
+            const result = document.getElementById('result3');
+            result.style.display = 'block';
+            result.className = 'result info';
+            result.textContent = 'Fetching teachers... Please wait...';
+
+            try {
+                const response = await fetch(`${BASE_URL}/teachers.php`);
+                const data = await response.json();
+
+                if (Array.isArray(data)) {
+                    result.className = 'result success';
+                    result.textContent = `✅ SUCCESS!\n\nFound ${data.length} teacher(s):\n\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    result.className = 'result error';
+                    result.textContent = `❌ UNEXPECTED RESPONSE\n\n${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                result.className = 'result error';
+                result.textContent = `❌ ERROR\n\n${error.message}`;
+            }
+        }
+
+        // Show instructions on load
+        window.addEventListener('load', () => {
+            console.log('Teacher Management System Test loaded');
+            console.log('Make sure XAMPP Apache and MySQL are running!');
+        });
+    </script>
+</body>
+</html>
