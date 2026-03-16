@@ -1,0 +1,11 @@
+venv/
+.git/
+.github/
+__pycache__/
+*.pyc
+.env
+node_modules/
+
+# Attendance CSVs can be large; don't bake into image
+AttendanceFiles/
+
