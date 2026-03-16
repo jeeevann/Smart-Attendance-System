@@ -39,7 +39,7 @@ try {
         INDEX idx_created (created_at)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     // add columns if they don't exist
-    $cols = ["photo_folder_path VARCHAR(255) DEFAULT ''", "face_encoding MEDIUMTEXT", "class VARCHAR(50) DEFAULT ''", "year VARCHAR(10) DEFAULT ''", "division VARCHAR(10) DEFAULT ''"];
+    $cols = ["photo_folder_path VARCHAR(255) DEFAULT ''", "face_encoding MEDIUMTEXT", "class VARCHAR(50) DEFAULT ''", "year VARCHAR(10) DEFAULT ''", "division VARCHAR(10) DEFAULT ''", "department VARCHAR(100) DEFAULT ''", "section VARCHAR(50) DEFAULT ''"];
     foreach ($cols as $def) {
         try { $pdo->exec("ALTER TABLE students ADD COLUMN $def"); } catch(Exception $e) { /* ignore */ }
     }
@@ -83,6 +83,8 @@ switch($method) {
             try {
                 $cols = [
                     'class_name' => "ALTER TABLE students ADD COLUMN class_name VARCHAR(100) NULL AFTER division",
+                    'section' => "ALTER TABLE students ADD COLUMN section VARCHAR(50) NULL AFTER class_name",
+                    'department' => "ALTER TABLE students ADD COLUMN department VARCHAR(100) NULL AFTER section",
                     'image_data' => "ALTER TABLE students ADD COLUMN image_data MEDIUMTEXT NULL",
                     'photo_folder_path' => "ALTER TABLE students ADD COLUMN photo_folder_path VARCHAR(255) NULL",
                     'face_encoding' => "ALTER TABLE students ADD COLUMN face_encoding MEDIUMTEXT NULL",
@@ -103,8 +105,7 @@ switch($method) {
                 if($e->getCode() == 23000) { // Duplicate entry error
                     echo json_encode(['success'=>false,'error'=>'Student ID already exists. Please use a different ID.']);
                 } else {
-                    $debug = getenv('APP_DEBUG');
-                    echo json_encode(['success'=>false,'error'=> $debug ? ('Failed to add student: ' . $e->getMessage()) : 'Server error']);
+                    echo json_encode(['success'=>false,'error'=>'Failed to add student: ' . $e->getMessage()]);
                 }
                 break;
             }
