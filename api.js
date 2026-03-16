@@ -1,7 +1,9 @@
 // API helper functions for database operations
-// On localhost (XAMPP), the project may live under /Mini-Project/FaceRecognition.
-// On Render, the app is deployed at the site root. Use a dynamic base to support both.
-const API_BASE = window.location.hostname === 'localhost' ? '/Mini-Project/FaceRecognition' : '';
+// Auto-detect base path from current page URL.
+// - XAMPP: /Mini-Project/FaceRecognition/login.html  -> /Mini-Project/FaceRecognition
+// - Render: /login.html                              -> (empty string)
+let API_BASE = window.location.pathname.replace(/\/[^\/]*$/, '');
+if (API_BASE === '/') API_BASE = '';
 
 async function apiRequest(endpoint, method = 'GET', data = null) {
     const options = {
