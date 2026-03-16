@@ -10,10 +10,10 @@ try {
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL,
         password VARCHAR(255) NULL,
-        phone VARCHAR(50) DEFAULT '',
+        phone VARCHAR(50) NULL,
         department VARCHAR(100) NOT NULL,
-        employee_id VARCHAR(100) DEFAULT '',
-        designation VARCHAR(100) DEFAULT '',
+        employee_id VARCHAR(100) NULL,
+        designation VARCHAR(100) NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         UNIQUE KEY uniq_teachers_email (email)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
@@ -36,19 +36,23 @@ switch($method) {
         $data = json_decode(file_get_contents('php://input'), true);
         
         try {
-            $check = $pdo->query("SHOW COLUMNS FROM teachers LIKE 'password'");
-            if ($check->rowCount() === 0) {
-                $pdo->exec("ALTER TABLE teachers ADD COLUMN password VARCHAR(255) NULL AFTER email");
+            $cols = [
+                'password' => "ALTER TABLE teachers ADD COLUMN password VARCHAR(255) NULL AFTER email",
+                'phone' => "ALTER TABLE teachers ADD COLUMN phone VARCHAR(50) NULL AFTER password",
+                'employee_id' => "ALTER TABLE teachers ADD COLUMN employee_id VARCHAR(100) NULL AFTER department",
+                'designation' => "ALTER TABLE teachers ADD COLUMN designation VARCHAR(100) NULL AFTER employee_id",
+                'created_at' => "ALTER TABLE teachers ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+            ];
+            foreach ($cols as $col => $sql) {
+                $check = $pdo->query("SHOW COLUMNS FROM teachers LIKE " . $pdo->quote($col));
+                if ($check->rowCount() === 0) {
+                    $pdo->exec($sql);
+                }
             }
 
             $idx = $pdo->query("SHOW INDEX FROM teachers WHERE Key_name = 'uniq_teachers_email'");
             if ($idx->rowCount() === 0) {
                 $pdo->exec("ALTER TABLE teachers ADD CONSTRAINT uniq_teachers_email UNIQUE (email)");
-            }
-          
-            $idx2 = $pdo->query("SHOW INDEX FROM teachers WHERE Key_name = 'uniq_teachers_phone'");
-            if ($idx2->rowCount() === 0) {
-                $pdo->exec("ALTER TABLE teachers ADD CONSTRAINT uniq_teachers_phone UNIQUE (phone)");
             }
         } catch (Exception $e) { /* ignore */ }
         $passwordHash = isset($data['password']) && $data['password'] !== '' ? password_hash($data['password'], PASSWORD_BCRYPT) : null;
@@ -76,11 +80,11 @@ switch($method) {
                 $msg = 'Duplicate value';
                 $em = strtolower($e->getMessage());
                 if (strpos($em, 'uniq_teachers_email') !== false || strpos($em, 'email') !== false) { $msg = 'Email already exists'; }
-                else if (strpos($em, 'uniq_teachers_phone') !== false || strpos($em, 'phone') !== false) { $msg = 'Mobile number already exists'; }
                 echo json_encode(['success' => false, 'error' => $msg]);
             } else {
                 http_response_code(500);
-                echo json_encode(['success' => false, 'error' => 'Server error']);
+                $debug = getenv('APP_DEBUG');
+                echo json_encode(['success' => false, 'error' => $debug ? $e->getMessage() : 'Server error']);
             }
         }
         break;
@@ -113,11 +117,11 @@ switch($method) {
                 $msg = 'Duplicate value';
                 $em = strtolower($e->getMessage());
                 if (strpos($em, 'uniq_teachers_email') !== false || strpos($em, 'email') !== false) { $msg = 'Email already exists'; }
-                else if (strpos($em, 'uniq_teachers_phone') !== false || strpos($em, 'phone') !== false) { $msg = 'Mobile number already exists'; }
                 echo json_encode(['success' => false, 'error' => $msg]);
             } else {
                 http_response_code(500);
-                echo json_encode(['success' => false, 'error' => 'Server error']);
+                $debug = getenv('APP_DEBUG');
+                echo json_encode(['success' => false, 'error' => $debug ? $e->getMessage() : 'Server error']);
             }
         }
         break;

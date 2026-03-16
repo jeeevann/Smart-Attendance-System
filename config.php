@@ -37,26 +37,36 @@ try {
     }
     $pdo = new PDO($dsn, $username, $password, $options);
 
-    // Ensure required tables exist
+    // Ensure required tables exist (keep schema aligned with API endpoints)
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS teachers (
           id INT AUTO_INCREMENT PRIMARY KEY,
-          name VARCHAR(100) NOT NULL,
-          email VARCHAR(100) NOT NULL UNIQUE,
-          password VARCHAR(255) NOT NULL,
-          department VARCHAR(100) NOT NULL
-        )
+          name VARCHAR(255) NOT NULL,
+          email VARCHAR(255) NOT NULL,
+          password VARCHAR(255) NULL,
+          phone VARCHAR(50) NULL,
+          department VARCHAR(100) NOT NULL,
+          employee_id VARCHAR(100) NULL,
+          designation VARCHAR(100) NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE KEY uniq_teachers_email (email)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     ");
 
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS students (
           id INT AUTO_INCREMENT PRIMARY KEY,
-          name VARCHAR(100) NOT NULL,
-          roll_no VARCHAR(20) NOT NULL,
-          department VARCHAR(100) NOT NULL,
-          year VARCHAR(20) NOT NULL,
-          division VARCHAR(10) NOT NULL
-        )
+          name VARCHAR(255) NOT NULL,
+          email VARCHAR(255) NULL,
+          phone VARCHAR(50) NULL,
+          roll_no VARCHAR(20) NULL,
+          class VARCHAR(50) NULL,
+          year VARCHAR(10) NULL,
+          division VARCHAR(10) NULL,
+          section VARCHAR(50) NULL,
+          department VARCHAR(100) NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     ");
 
     $pdo->exec("
@@ -70,9 +80,9 @@ try {
           time_slot VARCHAR(50) NOT NULL,
           attendance_date DATE NOT NULL,
           marked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          FOREIGN KEY (student_id) REFERENCES students(id),
-          FOREIGN KEY (teacher_id) REFERENCES teachers(id)
-        )
+          KEY idx_attendance_student_id (student_id),
+          KEY idx_attendance_teacher_id (teacher_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     ");
 } catch(PDOException $e) {
     http_response_code(500);
