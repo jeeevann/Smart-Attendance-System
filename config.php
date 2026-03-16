@@ -29,7 +29,44 @@ try {
         $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = ($sslMode === 'verify');
     }
     $pdo = new PDO($dsn, $username, $password, $options);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    // Ensure required tables exist
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS teachers (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          name VARCHAR(100) NOT NULL,
+          email VARCHAR(100) NOT NULL UNIQUE,
+          password VARCHAR(255) NOT NULL,
+          department VARCHAR(100) NOT NULL
+        )
+    ");
+
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS students (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          name VARCHAR(100) NOT NULL,
+          roll_no VARCHAR(20) NOT NULL,
+          department VARCHAR(100) NOT NULL,
+          year VARCHAR(20) NOT NULL,
+          division VARCHAR(10) NOT NULL
+        )
+    ");
+
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS attendance (
+          id INT AUTO_INCREMENT PRIMARY KEY,
+          student_id INT NULL,
+          teacher_id INT NULL,
+          department VARCHAR(100) NOT NULL,
+          year VARCHAR(20) NOT NULL,
+          division VARCHAR(10) NOT NULL,
+          time_slot VARCHAR(50) NOT NULL,
+          attendance_date DATE NOT NULL,
+          marked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (student_id) REFERENCES students(id),
+          FOREIGN KEY (teacher_id) REFERENCES teachers(id)
+        )
+    ");
 } catch(PDOException $e) {
     http_response_code(500);
     echo json_encode([ 'success' => false, 'error' => 'DB connection failed' ]);
