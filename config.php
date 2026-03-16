@@ -6,6 +6,7 @@ $username = getenv('DB_USER') ?: 'root';
 $password = getenv('DB_PASS') ?: '';
 $port = getenv('DB_PORT') ?: '';
 $sslMode = getenv('DB_SSLMODE') ?: '';
+$sslCaPem = getenv('DB_SSL_CA_PEM') ?: '';
 
 // Enable CORS for frontend
 header('Access-Control-Allow-Origin: *');
@@ -24,8 +25,14 @@ try {
     $options = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     ];
-    // Some cloud MySQL providers require TLS; allow enabling it via env var.
-    if ($sslMode) {
+    // Some cloud MySQL providers (like Aiven) require TLS.
+    // If DB_SSL_CA_PEM is provided, we write it to a temp file and pass it to PDO.
+    if ($sslCaPem) {
+        $caPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'db-ca.pem';
+        file_put_contents($caPath, str_replace("\\n", "\n", $sslCaPem));
+        $options[PDO::MYSQL_ATTR_SSL_CA] = $caPath;
+        $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+    } elseif ($sslMode) {
         $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = ($sslMode === 'verify');
     }
     $pdo = new PDO($dsn, $username, $password, $options);
