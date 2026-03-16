@@ -79,6 +79,22 @@ switch($method) {
             $email = $_POST['email'] ?? '';
             $phone = $_POST['phone'] ?? '';
             if(!$name || !$class || !$year || !$division){ echo json_encode(['success'=>false,'error'=>'Missing required fields']); break; }
+            // Ensure required columns exist (in case table was created earlier with a smaller schema)
+            try {
+                $cols = [
+                    'class_name' => "ALTER TABLE students ADD COLUMN class_name VARCHAR(100) NULL AFTER division",
+                    'image_data' => "ALTER TABLE students ADD COLUMN image_data MEDIUMTEXT NULL",
+                    'photo_folder_path' => "ALTER TABLE students ADD COLUMN photo_folder_path VARCHAR(255) NULL",
+                    'face_encoding' => "ALTER TABLE students ADD COLUMN face_encoding MEDIUMTEXT NULL",
+                ];
+                foreach ($cols as $col => $sql) {
+                    $check = $pdo->query("SHOW COLUMNS FROM students LIKE " . $pdo->quote($col));
+                    if ($check->rowCount() === 0) {
+                        $pdo->exec($sql);
+                    }
+                }
+            } catch (Exception $e) { /* ignore */ }
+
             $stmt = $pdo->prepare("INSERT INTO students (name, email, phone, roll_no, class, year, division, department, photo_folder_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, '')");
             try {
                 $ok = $stmt->execute([$name,$email,$phone,$roll,$class,$year,$division,$department]);
@@ -87,7 +103,8 @@ switch($method) {
                 if($e->getCode() == 23000) { // Duplicate entry error
                     echo json_encode(['success'=>false,'error'=>'Student ID already exists. Please use a different ID.']);
                 } else {
-                    echo json_encode(['success'=>false,'error'=>'Failed to add student: ' . $e->getMessage()]);
+                    $debug = getenv('APP_DEBUG');
+                    echo json_encode(['success'=>false,'error'=> $debug ? ('Failed to add student: ' . $e->getMessage()) : 'Server error']);
                 }
                 break;
             }

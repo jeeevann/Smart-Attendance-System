@@ -59,13 +59,18 @@ try {
           name VARCHAR(255) NOT NULL,
           email VARCHAR(255) NULL,
           phone VARCHAR(50) NULL,
-          roll_no VARCHAR(20) NULL,
+          roll_no VARCHAR(50) NULL,
           class VARCHAR(50) NULL,
           year VARCHAR(10) NULL,
           division VARCHAR(10) NULL,
+          class_name VARCHAR(100) NULL,
           section VARCHAR(50) NULL,
           department VARCHAR(100) NULL,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          image_data MEDIUMTEXT NULL,
+          photo_folder_path VARCHAR(255) NULL,
+          face_encoding MEDIUMTEXT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE KEY unique_roll_no (roll_no)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     ");
 
