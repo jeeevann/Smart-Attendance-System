@@ -1,5 +1,7 @@
 // API helper functions for database operations
-const API_BASE = '/Mini-Project/FaceRecognition';
+// On localhost (XAMPP), the project may live under /Mini-Project/FaceRecognition.
+// On Render, the app is deployed at the site root. Use a dynamic base to support both.
+const API_BASE = window.location.hostname === 'localhost' ? '/Mini-Project/FaceRecognition' : '';
 
 async function apiRequest(endpoint, method = 'GET', data = null) {
     const options = {
@@ -14,7 +16,7 @@ async function apiRequest(endpoint, method = 'GET', data = null) {
     }
     
     try {
-        const response = await fetch(`${API_BASE}/${endpoint}`, options);
+        const response = await fetch(`${API_BASE}/${endpoint}`.replace(/^\/\//, '/'), options);
         return await response.json();
     } catch (error) {
         console.error('API Error:', error);
@@ -41,7 +43,7 @@ const studentsAPI = {
                 form.append('photos[]', f);
             });
         }
-        const res = await fetch(`${API_BASE}/students.php`, { method: 'POST', body: form });
+        const res = await fetch(`${API_BASE}/students.php`.replace(/^\/\//, '/'), { method: 'POST', body: form });
         return res.json();
     },
     update: (student) => apiRequest('students.php', 'PUT', student),
