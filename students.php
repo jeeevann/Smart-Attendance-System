@@ -184,23 +184,6 @@ switch($method) {
             $stmt = $pdo->prepare("INSERT INTO teacher_activities (activity_type, activity_description, student_name, department, year, division) VALUES (?, ?, ?, ?, ?, ?)");
             $stmt->execute(['student_added', $activityDesc, $name, $department ?: $class, $year, $division]);
             
-            // Save to students.csv (format for face recognition: RollNo, Name)
-            $csvPath = $baseDir.DIRECTORY_SEPARATOR.'students.csv';
-            // Create CSV with header if it doesn't exist
-            if(!file_exists($csvPath)){
-                $fh = @fopen($csvPath, 'w');
-                if($fh !== false){
-                    fputcsv($fh, ['RollNo', 'Name']);
-                    fclose($fh);
-                }
-            }
-            // Append student data to CSV
-            $fh = @fopen($csvPath, 'a');
-            if($fh !== false){
-                fputcsv($fh, [$roll, $name]);
-                fclose($fh);
-            }
-            
             echo json_encode(['success'=>true,'id'=>$sid,'photos_saved'=>$saved]);
         } else {
             // JSON path (backward compatible)
@@ -266,25 +249,6 @@ switch($method) {
             $activityDesc = "Deleted student: {$student['name']} (Roll No: {$student['roll_no']})";
             $stmt = $pdo->prepare("INSERT INTO teacher_activities (activity_type, activity_description, student_name, department, year, division) VALUES (?, ?, ?, ?, ?, ?)");
             $stmt->execute(['student_deleted', $activityDesc, $student['name'], $student['department'], $student['year'], $student['division']]);
-            
-            // Delete from CSV
-            // Delete from CSV
-            $baseDir = __DIR__;
-            $csvPath = $baseDir.DIRECTORY_SEPARATOR.'students.csv';
-            if(file_exists($csvPath)){
-                $lines = file($csvPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-                $fh = @fopen($csvPath, 'w');
-                if($fh !== false){
-                    foreach($lines as $line){
-                        $data = str_getcsv($line);
-                        // Keep header and lines that don't match this roll number
-                        if(!isset($data[0]) || $data[0] === 'RollNo' || $data[0] !== $student['roll_no']){
-                            fwrite($fh, $line.PHP_EOL);
-                        }
-                    }
-                    fclose($fh);
-                }
-            }
             
             // Delete folder and images
             if($student['photo_folder_path']){
