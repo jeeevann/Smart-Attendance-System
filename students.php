@@ -17,7 +17,6 @@ try {
         class_name VARCHAR(100) DEFAULT '',
         section VARCHAR(50) DEFAULT '',
         department VARCHAR(100) DEFAULT '',
-        image_data MEDIUMTEXT NULL,
         photo_folder_path VARCHAR(255) DEFAULT '',
         face_encoding MEDIUMTEXT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -85,7 +84,6 @@ switch($method) {
                     'class_name' => "ALTER TABLE students ADD COLUMN class_name VARCHAR(100) NULL AFTER division",
                     'section' => "ALTER TABLE students ADD COLUMN section VARCHAR(50) NULL AFTER class_name",
                     'department' => "ALTER TABLE students ADD COLUMN department VARCHAR(100) NULL AFTER section",
-                    'image_data' => "ALTER TABLE students ADD COLUMN image_data MEDIUMTEXT NULL",
                     'photo_folder_path' => "ALTER TABLE students ADD COLUMN photo_folder_path VARCHAR(255) NULL",
                     'face_encoding' => "ALTER TABLE students ADD COLUMN face_encoding MEDIUMTEXT NULL",
                 ];
@@ -186,18 +184,20 @@ switch($method) {
             
             echo json_encode(['success'=>true,'id'=>$sid,'photos_saved'=>$saved]);
         } else {
-            // JSON path (backward compatible)
+            // JSON path (backward compatible) - no image data stored in DB
             $data = json_decode(file_get_contents('php://input'), true);
-            $stmt = $pdo->prepare("INSERT INTO students (name, email, phone, roll_no, class_name, section, department, image_data) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $pdo->prepare("INSERT INTO students (name, email, phone, roll_no, class, year, division, class_name, section, department) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $result = $stmt->execute([
                 $data['name'],
                 $data['email'] ?? '',
                 $data['phone'] ?? '',
                 $data['roll_no'] ?? '',
+                $data['class'] ?? ($data['class_name'] ?? ''),
+                $data['year'] ?? '',
+                $data['division'] ?? '',
                 $data['class_name'] ?? '',
                 $data['section'] ?? '',
-                $data['department'] ?? '',
-                $data['image_data'] ?? ''
+                $data['department'] ?? ''
             ]);
             if($result) {
                 echo json_encode(['success' => true, 'id' => $pdo->lastInsertId()]);
@@ -212,7 +212,7 @@ switch($method) {
         $data = json_decode(file_get_contents('php://input'), true);
         $id = $data['id'];
         
-        $stmt = $pdo->prepare("UPDATE students SET name=?, email=?, phone=?, roll_no=?, class=?, year=?, division=?, class_name=?, section=?, department=?, image_data=? WHERE id=?");
+        $stmt = $pdo->prepare("UPDATE students SET name=?, email=?, phone=?, roll_no=?, class=?, year=?, division=?, class_name=?, section=?, department=? WHERE id=?");
         $result = $stmt->execute([
             $data['name'],
             $data['email'],
@@ -224,7 +224,6 @@ switch($method) {
             $data['class_name'] ?? '',
             $data['section'] ?? '',
             $data['department'] ?? '',
-            $data['image_data'] ?? '',
             $id
         ]);
         

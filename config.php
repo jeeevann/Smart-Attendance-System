@@ -82,7 +82,6 @@ try {
           class_name VARCHAR(100) NULL,
           section VARCHAR(50) NULL,
           department VARCHAR(100) NULL,
-          image_data MEDIUMTEXT NULL,
           photo_folder_path VARCHAR(255) NULL,
           face_encoding MEDIUMTEXT NULL,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
