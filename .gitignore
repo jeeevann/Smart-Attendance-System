@@ -1,0 +1,5 @@
+.env
+check_schema.php
+venv/
+__pycache__/
+*.pyc

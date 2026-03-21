@@ -1,52 +1,12 @@
 <?php
-// Prefer explicit DB_* vars, then common managed-DB variable names.
-function firstEnv(array $keys, $default = '') {
-    foreach ($keys as $key) {
-        $value = getenv($key);
-        if ($value !== false && $value !== '') {
-            return $value;
-        }
-    }
-    return $default;
-}
-
-// Database configuration (supports both split vars and URL-based config)
-$host = firstEnv(['DB_HOST', 'MYSQLHOST'], 'localhost');
-$dbname = firstEnv(['DB_NAME', 'MYSQLDATABASE'], 'smart_attendance');
-$username = firstEnv(['DB_USER', 'DB_USERNAME', 'MYSQLUSER'], 'root');
-$password = firstEnv(['DB_PASS', 'DB_PASSWORD', 'MYSQLPASSWORD'], '');
-$port = firstEnv(['DB_PORT', 'MYSQLPORT'], '');
-$sslMode = firstEnv(['DB_SSLMODE', 'MYSQL_SSL_MODE'], '');
-$sslCaPem = firstEnv(['DB_SSL_CA_PEM', 'MYSQL_SSL_CA_PEM'], '');
-$dbUrl = firstEnv(['DATABASE_URL', 'MYSQL_URL', 'JAWSDB_URL'], '');
-
-if ($dbUrl) {
-    $parsed = parse_url($dbUrl);
-    if ($parsed !== false) {
-        // Accept mysql://user:pass@host:port/dbname style URLs.
-        if (!empty($parsed['host'])) {
-            $host = $parsed['host'];
-        }
-        if (!empty($parsed['port'])) {
-            $port = (string)$parsed['port'];
-        }
-        if (!empty($parsed['user'])) {
-            $username = $parsed['user'];
-        }
-        if (array_key_exists('pass', $parsed) && $parsed['pass'] !== null) {
-            $password = $parsed['pass'];
-        }
-        if (!empty($parsed['path'])) {
-            $pathDb = ltrim($parsed['path'], '/');
-            if ($pathDb !== '') {
-                $dbname = $pathDb;
-            }
-        }
-    }
-}
-
-$appDebug = strtolower((string)firstEnv(['APP_DEBUG'], 'false'));
-$appDebugEnabled = in_array($appDebug, ['1', 'true', 'yes', 'on'], true);
+// Database configuration
+$host = getenv('DB_HOST') ?: 'localhost';
+$dbname = getenv('DB_NAME') ?: 'smart_attendance';
+$username = getenv('DB_USER') ?: 'root';
+$password = getenv('DB_PASS') ?: '';
+$port = getenv('DB_PORT') ?: '';
+$sslMode = getenv('DB_SSLMODE') ?: '';
+$sslCaPem = getenv('DB_SSL_CA_PEM') ?: '';
 
 // Enable CORS for frontend
 header('Access-Control-Allow-Origin: *');
