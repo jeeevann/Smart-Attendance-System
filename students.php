@@ -38,7 +38,7 @@ try {
         INDEX idx_created (created_at)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     // add columns if they don't exist
-    $cols = ["photo_folder_path VARCHAR(255) DEFAULT ''", "face_encoding MEDIUMTEXT", "class VARCHAR(50) DEFAULT ''", "year VARCHAR(10) DEFAULT ''", "division VARCHAR(10) DEFAULT ''", "department VARCHAR(100) DEFAULT ''", "section VARCHAR(50) DEFAULT ''"];
+    $cols = ["email VARCHAR(255) DEFAULT ''", "phone VARCHAR(50) DEFAULT ''", "roll_no VARCHAR(50) DEFAULT ''", "class VARCHAR(50) DEFAULT ''", "year VARCHAR(10) DEFAULT ''", "division VARCHAR(10) DEFAULT ''", "class_name VARCHAR(100) DEFAULT ''", "section VARCHAR(50) DEFAULT ''", "department VARCHAR(100) DEFAULT ''", "photo_folder_path VARCHAR(255) DEFAULT ''", "face_encoding MEDIUMTEXT"];
     foreach ($cols as $def) {
         try { $pdo->exec("ALTER TABLE students ADD COLUMN $def"); } catch(Exception $e) { /* ignore */ }
     }
