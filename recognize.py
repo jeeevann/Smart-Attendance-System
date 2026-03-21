@@ -28,25 +28,79 @@ class FaceRecognitionSystem:
         self.setup_attendance_file()
     
     def load_data(self):
-        """Load face encodings and student data"""
+        """Load face encodings and student data DIRECTLY from Aiven MySQL (Cloud)"""
+        import mysql.connector as mysql
+        
+        # Load env variables
+        env_path = os.path.join(self.BASE_DIR, ".env")
+        env_vars = {}
+        if os.path.exists(env_path):
+            with open(env_path, "r") as f:
+                for line in f:
+                    if line.strip() and not line.startswith('#'):
+                        key, val = line.strip().split('=', 1)
+                        env_vars[key] = val
+
+        host = os.environ.get('DB_HOST', env_vars.get('DB_HOST', 'localhost'))
+        port = int(os.environ.get('DB_PORT', env_vars.get('DB_PORT', 3306)))
+        user = os.environ.get('DB_USER', env_vars.get('DB_USER', 'root'))
+        password = os.environ.get('DB_PASS', env_vars.get('DB_PASS', ''))
+        database = os.environ.get('DB_NAME', env_vars.get('DB_NAME', 'smart_attendance'))
+
         try:
-            with open(self.ENCODINGS_PATH, "rb") as f:
-                data = pickle.load(f)
-                # Handle both old and new format
-                if len(data) == 4:
-                    self.known_encodings, self.known_names, self.baseline_encodings, self.student_class_info = data
-                else:
-                    self.known_encodings, self.known_names, self.baseline_encodings = data
-                    self.student_class_info = {}
+            db = mysql.connect(host=host, port=port, user=user, password=password, database=database)
+            cursor = db.cursor(dictionary=True)
             
-            self.students_df = pd.read_csv(self.STUDENTS_CSV)
-            self.students_df["Name"] = self.students_df["Name"].str.strip()
-            self.students_df["RollNo"] = self.students_df["RollNo"].astype(str).str.strip()
+            # Fetch all students from DB
+            cursor.execute("SELECT id, name, roll_no, department, class as class_name, year, division, face_encoding FROM students")
+            students_data = cursor.fetchall()
             
-            print(f"[INFO] Loaded {len(self.known_names)} face encodings")
-            print(f"[INFO] Loaded {len(self.students_df)} student records")
+            self.baseline_encodings = {}
+            self.student_class_info = {}
+            self.known_names = []
+            
+            students_list_for_df = []
+            
+            for s in students_data:
+                # Store student info for records
+                roll_str = str(s['roll_no']).strip() if s['roll_no'] else ''
+                name = str(s['name']).strip()
+                
+                students_list_for_df.append({
+                    "Name": name,
+                    "RollNo": roll_str
+                })
+                
+                # Setup class info
+                dept = s['department'] if s['department'] else s['class_name']
+                self.student_class_info[name] = {
+                    'department': dept or '',
+                    'year': s['year'] or '',
+                    'division': s['division'] or '',
+                    'roll_no': roll_str
+                }
+                
+                # Setup encoding if present
+                if s.get('face_encoding'):
+                    enc_b64 = s['face_encoding']
+                    try:
+                        enc_bytes = base64.b64decode(enc_b64)
+                        enc_array = pickle.loads(enc_bytes)
+                        self.baseline_encodings[name] = enc_array
+                        self.known_names.append(name)
+                    except Exception as e:
+                        print(f"[WARNING] Failed to decode face_encoding for {name}: {e}")
+            
+            # Create the DataFrame equivalent from DB data
+            self.students_df = pd.DataFrame(students_list_for_df)
+            
+            cursor.close()
+            db.close()
+            
+            print(f"[INFO] Loaded {len(self.known_names)} face encodings from Cloud DB")
+            print(f"[INFO] Loaded {len(self.students_df)} student records from Cloud DB")
         except Exception as e:
-            print(f"[ERROR] Failed to load data: {e}")
+            print(f"[ERROR] Failed to load data from Cloud DB: {e}")
             raise
     
     def setup_attendance_file(self, department=None, year=None, division=None, time_slot=None):
