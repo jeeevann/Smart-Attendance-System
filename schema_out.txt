@@ -1,0 +1,3 @@
+﻿id, name, email, phone, roll_no, class, year, division, class_name, section, department, photo_folder_path, face_encoding, created_at
+Total columns: 14
+All required columns present!

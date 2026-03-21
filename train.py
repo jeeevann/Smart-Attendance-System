@@ -82,17 +82,22 @@ print("[INFO] Training started...")
 for root, dirs, files in os.walk(STUDENTS_DIR):
     # Check if this is a student folder (contains images)
     if files and any(f.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp')) for f in files):
-        # Extract student name from the path
-        student_name = os.path.basename(root)
+        # Extract class info and student name from path
+        path_parts = root.replace(STUDENTS_DIR, '').strip(os.sep).split(os.sep)
+        
+        # Handle the new 'images' subdirectory structure
+        if path_parts[-1].lower() == 'images' and len(path_parts) >= 2:
+            student_name = path_parts[-2]
+            path_parts = path_parts[:-1]  # Remove 'images' for dept/year/div index
+        else:
+            student_name = path_parts[-1]
         
         # Check if student name exists in database
         if student_name not in valid_names:
             print(f"[WARNING] '{student_name}' folder does not match any Name in database!")
             continue
         
-        # Extract class info from path
-        path_parts = root.replace(STUDENTS_DIR, '').strip(os.sep).split(os.sep)
-        if len(path_parts) >= 3:
+        if len(path_parts) >= 4:
             dept_from_path = path_parts[0]
             year_from_path = path_parts[1]
             div_from_path = path_parts[2]

@@ -131,11 +131,15 @@ switch($method) {
             $safeName = preg_replace('/\s+/', ' ', $safeName);
             if($safeName === '') $safeName = 'student_'.$sid;
             
-            // Hierarchical folder structure: Students/<Department>/<Year>/<Division>/<StudentName>/
+            // Hierarchical folder structure: Students/<Department>/<Year>/<Division>/<StudentName>/images/
             $baseDir = __DIR__;
             $dept = $department ?: $class;
+            
+            // The relative path stored in DB will just be to the student folder (to match API format)
             $targetRel = 'Students/'.$dept.'/'.$year.'/'.$division.'/'.$safeName;
-            $targetAbs = $baseDir.DIRECTORY_SEPARATOR.'Students'.DIRECTORY_SEPARATOR.$dept.DIRECTORY_SEPARATOR.$year.DIRECTORY_SEPARATOR.$division.DIRECTORY_SEPARATOR.$safeName;
+            
+            // But the absolute path where photos are saved will include /images
+            $targetAbs = $baseDir.DIRECTORY_SEPARATOR.'Students'.DIRECTORY_SEPARATOR.$dept.DIRECTORY_SEPARATOR.$year.DIRECTORY_SEPARATOR.$division.DIRECTORY_SEPARATOR.$safeName.DIRECTORY_SEPARATOR.'images';
             
             // Create hierarchical directory structure
             if(!is_dir($targetAbs)) @mkdir($targetAbs, 0777, true);

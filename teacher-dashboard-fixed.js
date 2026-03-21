@@ -240,7 +240,7 @@
     formData.append('department', department)
     
     uploadedFiles.forEach((file) => {
-      formData.append('photos', file)
+      formData.append('photos[]', file)
     })
 
     try {
