@@ -88,6 +88,9 @@ try {
           UNIQUE KEY unique_roll_no (roll_no)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     ");
+    
+    // Ensure email column exists (fixes existing databases without it)
+    try { $pdo->exec("ALTER TABLE students ADD COLUMN email VARCHAR(255) NULL"); } catch(Exception $e) { /* already exists */ }
 
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS attendance (
