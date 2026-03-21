@@ -1,14 +1,15 @@
 FROM php:8.2-apache
 
 # Install system dependencies required for dlib, OpenCV, and Python
-RUN apt-get update && apt-get install -y \
+RUN (apt-get update || apt-get update --allow-releaseinfo-change) && apt-get install -y \
     python3 \
     python3-pip \
     python3-venv \
     cmake \
     build-essential \
-    libgl1-mesa-glx \
+    libgl1 \
     libglib2.0-0 \
+    libxext6 \
     && rm -rf /var/lib/apt/lists/*
 
 # Setup PHP extensions and Apache Proxy
