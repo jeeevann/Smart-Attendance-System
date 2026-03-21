@@ -146,7 +146,8 @@
   const btnDetect = $('#btn-detect')
   const btnReset = $('#btn-reset')
 
-  const FLASK_BASE = 'http://127.0.0.1:5001'
+  // Cloud routing: Use /api to hit the proxy which forwards to Python
+  const FLASK_BASE = window.location.pathname.replace(/\/[^\/]*$/, '') + '/api';
   let streaming = false
   let streamTimer = null
   let attendanceLog = []
