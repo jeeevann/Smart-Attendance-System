@@ -1,4 +1,20 @@
 <?php
+// Load .env file if it exists (for local development)
+$envFile = __DIR__ . DIRECTORY_SEPARATOR . '.env';
+if (file_exists($envFile)) {
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if ($line === '' || $line[0] === '#') continue;
+        if (strpos($line, '=') !== false) {
+            list($key, $val) = explode('=', $line, 2);
+            $key = trim($key);
+            $val = trim($val, " \t\n\r\0\x0B\"'");
+            putenv("$key=$val");
+        }
+    }
+}
+
 // Database configuration
 $host = getenv('DB_HOST') ?: 'localhost';
 $dbname = getenv('DB_NAME') ?: 'smart_attendance';
@@ -91,19 +107,7 @@ try {
     ");
 } catch(PDOException $e) {
     http_response_code(500);
-    if ($appDebugEnabled) {
-        echo json_encode([
-            'success' => false,
-            'error' => 'DB connection failed',
-            'details' => $e->getMessage(),
-            'host' => $host,
-            'port' => $port,
-            'database' => $dbname,
-            'user' => $username,
-        ]);
-    } else {
-        echo json_encode([ 'success' => false, 'error' => 'DB connection failed' ]);
-    }
+    echo json_encode([ 'success' => false, 'error' => 'DB connection failed', 'details' => $e->getMessage() ]);
     exit;
 }
 ?>
