@@ -179,10 +179,15 @@ switch($method) {
             // Use forward slashes for web paths
             $pdo->prepare("UPDATE students SET photo_folder_path=? WHERE id=?")->execute([$targetRel, $sid]);
             
-            // Log activity
-            $activityDesc = "Added student: {$name} (Roll No: {$roll})";
-            $stmt = $pdo->prepare("INSERT INTO teacher_activities (activity_type, activity_description, student_name, department, year, division) VALUES (?, ?, ?, ?, ?, ?)");
             $stmt->execute(['student_added', $activityDesc, $name, $department ?: $class, $year, $division]);
+            
+            // AUTOMATIC TRAINING REPLACEMENT FOR SHELL: 
+            // Trigger train.py in the background automatically so the user doesn't need a Cloud Shell!
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                pclose(popen('start /B python train.py 1> NUL 2>&1', 'r'));
+            } else {
+                exec("python3 train.py > /dev/null 2>&1 &");
+            }
             
             echo json_encode(['success'=>true,'id'=>$sid,'photos_saved'=>$saved]);
         } else {
