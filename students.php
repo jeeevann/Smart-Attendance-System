@@ -129,7 +129,7 @@ switch($method) {
             $stmt = $pdo->prepare("INSERT INTO students (name, email, phone, roll_no, class, year, division, department, photo_folder_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, '')");
             try {
                 $ok = $stmt->execute([$name,$email,$phone,$roll,$class,$year,$division,$department]);
-                if(!$ok){ echo json_encode(['success'=>false,'error'=>'Failed to add student']); break; }
+                if(!$ok){ echo json_encode(['success'=>false,'error'=>'MySQL Schema Rejection: ' . json_encode($stmt->errorInfo())]); break; }
             } catch(PDOException $e) {
                 if($e->getCode() == 23000) { // Duplicate entry error
                     echo json_encode(['success'=>false,'error'=>'Student ID already exists. Please use a different ID.']);
@@ -227,7 +227,7 @@ switch($method) {
             if($result) {
                 echo json_encode(['success' => true, 'id' => $pdo->lastInsertId()]);
             } else {
-                echo json_encode(['success' => false, 'error' => 'Failed to add student']);
+                echo json_encode(['success' => false, 'error' => 'MySQL Schema Rejection (JSON Fallback): ' . json_encode($stmt->errorInfo())]);
             }
         }
         break;
