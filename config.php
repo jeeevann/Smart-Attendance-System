@@ -42,16 +42,16 @@ try {
     $options = [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     ];
-    // Some cloud MySQL providers (like Aiven) require TLS.
-    // If DB_SSL_CA_PEM is provided, we write it to a temp file and pass it to PDO.
-    if ($sslCaPem) {
-        $caPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'db-ca.pem';
-        file_put_contents($caPath, str_replace("\\n", "\n", $sslCaPem));
-        $options[PDO::MYSQL_ATTR_SSL_CA] = $caPath;
+    
+    // Aiven Cloud DB STRICTLY requires TLS/SSL connection
+    // We bind it directly to the Debian OS built-in certificates
+    if (file_exists('/etc/ssl/certs/ca-certificates.crt')) {
+        $options[PDO::MYSQL_ATTR_SSL_CA] = '/etc/ssl/certs/ca-certificates.crt';
         $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
-    } elseif ($sslMode) {
-        $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = ($sslMode === 'verify');
+    } else {
+        $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
     }
+    
     $pdo = new PDO($dsn, $username, $password, $options);
 
     // Ensure required tables exist (keep schema aligned with API endpoints)

@@ -49,7 +49,12 @@ class FaceRecognitionSystem:
         database = os.environ.get('DB_NAME', env_vars.get('DB_NAME', 'defaultdb'))
 
         try:
-            db = mysql.connect(host=host, port=port, user=user, password=password, database=database)
+            ssl_ca_path = '/etc/ssl/certs/ca-certificates.crt'
+            if os.path.exists(ssl_ca_path):
+                db = mysql.connect(host=host, port=port, user=user, password=password, database=database, ssl_ca=ssl_ca_path, ssl_verify_cert=False)
+            else:
+                db = mysql.connect(host=host, port=port, user=user, password=password, database=database)
+            
             cursor = db.cursor(dictionary=True)
             
             # Fetch all students from DB

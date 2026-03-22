@@ -34,7 +34,12 @@ def get_db_connection():
     password = os.environ.get('DB_PASS', env_vars.get('DB_PASS', base64.b64decode('QVZOU19UaXNLVDBFQWNfMlVOUnlGUkto').decode('utf-8')))
     database = os.environ.get('DB_NAME', env_vars.get('DB_NAME', 'defaultdb'))
 
-    return mysql.connect(host=host, port=port, user=user, password=password, database=database)
+    # Aiven strictly requires TLS. Use standard Debian cert path
+    ssl_ca_path = '/etc/ssl/certs/ca-certificates.crt'
+    if os.path.exists(ssl_ca_path):
+        return mysql.connect(host=host, port=port, user=user, password=password, database=database, ssl_ca=ssl_ca_path, ssl_verify_cert=False)
+    else:
+        return mysql.connect(host=host, port=port, user=user, password=password, database=database)
 
 # ----------------------------
 # Load Student Data from Database
