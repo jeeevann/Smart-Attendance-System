@@ -196,7 +196,9 @@ switch($method) {
             // Use forward slashes for web paths
             $pdo->prepare("UPDATE students SET photo_folder_path=? WHERE id=?")->execute([$targetRel, $sid]);
             
-            $stmt->execute(['student_added', $activityDesc, $name, $department ?: $class, $year, $division]);
+            $activityDesc = "Added student: {$name} (Roll No: {$roll})";
+            $pdo->prepare("INSERT INTO teacher_activities (activity_type, activity_description, student_name, department, year, division) VALUES (?, ?, ?, ?, ?, ?)")
+                ->execute(['student_added', $activityDesc, $name, $department ?: $class, $year, $division]);
             
             // AUTOMATIC TRAINING REPLACEMENT FOR SHELL: 
             // Trigger train.py in the background automatically so the user doesn't need a Cloud Shell!
