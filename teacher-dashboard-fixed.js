@@ -251,17 +251,21 @@
         method: 'POST',
         body: formData
       })
-      const result = await response.json()
-      
-      if (result.success) {
-        toast(`Student added successfully! Photos saved: ${result.photos_saved || 0}`, 'success')
-        studentForm.reset()
-        if(studentPhotosInput) studentPhotosInput.value = ''
-        if(photoPreview) photoPreview.innerHTML = ''
-        await loadStudents()
-        await loadRecentActivities() // Refresh activity log
-      } else {
-        toast(result.error || 'Failed to add student', 'danger')
+      const rawText = await response.text()
+      try {
+        const result = JSON.parse(rawText)
+        if (result.success) {
+          toast(`Student added successfully! Photos saved: ${result.photos_saved || 0}`, 'success')
+          studentForm.reset()
+          if(studentPhotosInput) studentPhotosInput.value = ''
+          if(photoPreview) photoPreview.innerHTML = ''
+          await loadStudents()
+          await loadRecentActivities() // Refresh activity log
+        } else {
+          toast(result.error || 'Failed to add student', 'danger')
+        }
+      } catch(e) {
+        throw new Error(rawText.substring(0, 200))
       }
     } catch (error) {
       console.error('Error adding student:', error)
@@ -277,7 +281,15 @@
       studentsTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: var(--muted);">Loading students...</td></tr>'
       
       const response = await fetch('students.php')
-      const students = await response.json()
+      const rawText = await response.text()
+      let students = []
+      try {
+        students = JSON.parse(rawText)
+      } catch(e) {
+        toast(`Error parsing students: ${rawText.substring(0, 150)}`, 'danger')
+        studentsTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: var(--danger);">Failed to load students</td></tr>'
+        return
+      }
       
       if (!Array.isArray(students)) {
         console.error('Invalid response from API:', students)
