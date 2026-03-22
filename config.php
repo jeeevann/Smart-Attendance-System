@@ -1,4 +1,6 @@
 <?php
+error_reporting(0);
+ini_set('display_errors', 0);
 // Load .env file if it exists (for local development)
 $envFile = __DIR__ . DIRECTORY_SEPARATOR . '.env';
 if (file_exists($envFile)) {
@@ -48,7 +50,7 @@ try {
     if (file_exists('/etc/ssl/certs/ca-certificates.crt')) {
         $options[PDO::MYSQL_ATTR_SSL_CA] = '/etc/ssl/certs/ca-certificates.crt';
         $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
-    } else {
+    } else {ting..
         $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
     }
     

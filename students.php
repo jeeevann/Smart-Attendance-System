@@ -63,19 +63,22 @@ try {
 
 switch($method) {
     case 'GET':
-        // Check if requesting activities
-        if(isset($_GET['activities'])){
-            // Get recent activities
-            $limit = isset($_GET['limit']) ? intval($_GET['limit']) : 10;
-            // Use direct query with sanitized int for LIMIT (PDO doesn't allow LIMIT with bound params in some versions)
-            $stmt = $pdo->query("SELECT * FROM teacher_activities ORDER BY created_at DESC LIMIT $limit");
-            $activities = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            echo json_encode($activities);
-        } else {
-            // Get all students
-            $stmt = $pdo->query("SELECT id, name, email, phone, roll_no, class, year, division, class_name, section, department, photo_folder_path, created_at FROM students ORDER BY created_at DESC");
-            $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            echo json_encode($students);
+        try {
+            // Check if requesting activities
+            if (isset($_GET['action']) && $_GET['action'] == 'activities') {
+                $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+                $stmt = $pdo->query("SELECT * FROM teacher_activities ORDER BY created_at DESC LIMIT $limit");
+                $activities = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                echo json_encode($activities);
+            } else {
+                // Get all students
+                $stmt = $pdo->query("SELECT id, name, email, phone, roll_no, class, year, division, class_name, section, department, photo_folder_path, created_at FROM students ORDER BY created_at DESC");
+                $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                echo json_encode($students);
+            }
+        } catch (\Throwable $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => 'AIVEN DB FATAL GET: ' . $e->getMessage()]);
         }
         break;
         
