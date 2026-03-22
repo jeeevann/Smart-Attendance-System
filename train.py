@@ -122,3 +122,12 @@ for root, dirs, files in os.walk(STUDENTS_DIR):
 cursor.close()
 db.close()
 print("\n[INFO] Cloud Training completed successfully! All encodings are stored in Aiven.")
+
+# Extremely critical: Instruct the background daemon to reload immediately
+import urllib.request
+try:
+    req = urllib.request.Request("http://127.0.0.1:5001/reload", method="POST")
+    urllib.request.urlopen(req, timeout=5)
+    print("[INFO] Instructed live Face Recognition server to reload new data from Cloud DB!")
+except Exception as e:
+    print(f"[WARNING] Could not auto-reload live Face Recognition server: {e}")
