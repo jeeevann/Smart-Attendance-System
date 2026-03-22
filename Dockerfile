@@ -5,7 +5,6 @@ RUN (apt-get update || apt-get update --allow-releaseinfo-change) && apt-get ins
     python3 \
     python3-pip \
     python3-venv \
-    python3-dlib \
     python3-opencv \
     python3-numpy \
     cmake \
@@ -33,13 +32,12 @@ RUN python3 -m venv --system-site-packages /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Prevent pip from trying to compile the heavy packages we just installed globally
-RUN sed -i '/dlib/d' requirements.txt && \
-    sed -i '/opencv-python/d' requirements.txt && \
+RUN sed -i '/opencv-python/d' requirements.txt && \
     sed -i '/numpy/d' requirements.txt
 
-# Install the rest of the Python packages instantly
+# Install the rest of the Python packages, restricting dlib compiler core limits to 1 thread to avoid 8GB crash.
 RUN pip install --no-cache-dir setuptools wheel
-RUN pip install --no-cache-dir -r requirements.txt
+RUN CMAKE_BUILD_PARALLEL_LEVEL=1 pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the app
 COPY . /var/www/html
