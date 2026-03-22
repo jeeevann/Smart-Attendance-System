@@ -265,7 +265,7 @@
       }
     } catch (error) {
       console.error('Error adding student:', error)
-      toast('Failed to add student', 'danger')
+      toast(`[SYSTEM ERROR]: ${error.message}`, 'danger')
     }
   })
 

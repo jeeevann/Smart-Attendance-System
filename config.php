@@ -50,7 +50,7 @@ try {
     if (file_exists('/etc/ssl/certs/ca-certificates.crt')) {
         $options[PDO::MYSQL_ATTR_SSL_CA] = '/etc/ssl/certs/ca-certificates.crt';
         $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
-    } else {ting..
+    } else {
         $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
     }
     
