@@ -44,6 +44,7 @@ try {
     $altCmds = [
         "ALTER TABLE students ADD COLUMN email VARCHAR(255) NULL",
         "ALTER TABLE students ADD COLUMN phone VARCHAR(50) NULL",
+        "ALTER TABLE students ADD COLUMN roll_no VARCHAR(50) NULL",
         "ALTER TABLE students ADD COLUMN photo_folder_path VARCHAR(255) NULL",
         "ALTER TABLE students ADD COLUMN face_encoding MEDIUMTEXT NULL",
         "ALTER TABLE students ADD COLUMN class VARCHAR(50) NULL",
@@ -118,7 +119,8 @@ switch($method) {
                 if($e->getCode() == 23000) { // Duplicate entry error
                     echo json_encode(['success'=>false,'error'=>'Student ID already exists. Please use a different ID.']);
                 } else {
-                    echo json_encode(['success'=>false,'error'=>'Failed to add student: ' . $e->getMessage()]);
+                    http_response_code(500);
+                    echo json_encode(['success' => false, 'error' => 'DATABSE_ERROR: ' . $e->getMessage()]);
                 }
                 break;
             }
@@ -202,7 +204,10 @@ switch($method) {
                 $data['class_name'] ?? '',
                 $data['section'] ?? '',
                 $data['department'] ?? '',
+
                 $data['image_data'] ?? ''
+
+                
             ]);
             if($result) {
                 echo json_encode(['success' => true, 'id' => $pdo->lastInsertId()]);
