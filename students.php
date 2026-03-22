@@ -65,13 +65,25 @@ switch($method) {
     case 'GET':
         try {
             // Check if requesting activities
-            if (isset($_GET['action']) && $_GET['action'] == 'activities') {
+            if (isset($_GET['activities'])) {
                 $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
                 $stmt = $pdo->query("SELECT * FROM teacher_activities ORDER BY created_at DESC LIMIT $limit");
                 $activities = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 echo json_encode($activities);
-            } else {
-                // Get all students
+            } 
+            // Check for student duplicates 
+            else if (isset($_GET['action']) && $_GET['action'] == 'check_duplicate') {
+                $roll = $_GET['roll'] ?? '';
+                if ($roll) {
+                    $stmt = $pdo->prepare("SELECT id FROM students WHERE roll_no = ?");
+                    $stmt->execute([$roll]);
+                    echo json_encode(['exists' => $stmt->fetch() !== false]);
+                } else {
+                    echo json_encode(['exists' => false]);
+                }
+            } 
+            // Default: Get all students
+            else {
                 $stmt = $pdo->query("SELECT id, name, email, phone, roll_no, class, year, division, class_name, section, department, photo_folder_path, created_at FROM students ORDER BY created_at DESC");
                 $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 echo json_encode($students);
