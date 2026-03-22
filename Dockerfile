@@ -1,10 +1,13 @@
 FROM php:8.2-apache
 
-# Install system dependencies required for dlib, OpenCV, and Python
+# Install system dependencies AND pre-compiled AI binaries to prevent memory crashes
 RUN (apt-get update || apt-get update --allow-releaseinfo-change) && apt-get install -y \
     python3 \
     python3-pip \
     python3-venv \
+    python3-dlib \
+    python3-opencv \
+    python3-numpy \
     cmake \
     build-essential \
     libgl1 \
@@ -22,14 +25,19 @@ RUN echo "ProxyPass /api/ http://127.0.0.1:5001/\nProxyPassReverse /api/ http://
 
 WORKDIR /var/www/html
 
-# Copy requirements and install Python packages
+# Copy requirements
 COPY requirements.txt .
 
-# Use a virtual environment (best practice for Debian-based Docker images)
-RUN python3 -m venv /opt/venv
+# Use a virtual environment that INHERITS the pre-built global binaries 
+RUN python3 -m venv --system-site-packages /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Install Python packages
+# Prevent pip from trying to compile the heavy packages we just installed globally
+RUN sed -i '/dlib/d' requirements.txt && \
+    sed -i '/opencv-python/d' requirements.txt && \
+    sed -i '/numpy/d' requirements.txt
+
+# Install the rest of the Python packages instantly
 RUN pip install --no-cache-dir setuptools wheel
 RUN pip install --no-cache-dir -r requirements.txt
 
