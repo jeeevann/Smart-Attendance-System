@@ -19,7 +19,16 @@ async function apiRequest(endpoint, method = 'GET', data = null) {
     
     try {
         const response = await fetch(`${API_BASE}/${endpoint}`.replace(/^\/\//, '/'), options);
-        return await response.json();
+        // Intercept exactly whatever text is blindly dropping from Render/PHP
+        const rawText = await response.text();
+        
+        try {
+            return JSON.parse(rawText);
+        } catch (jsonErr) {
+            console.error("RAW API Response (Not JSON):", rawText);
+            // Slice the first 100 characters so the Toast tells us exactly the PHP/Database Error instead of SyntaxError!
+            throw new Error(rawText.substring(0, 150));
+        }
     } catch (error) {
         console.error('API Error:', error);
         throw error;

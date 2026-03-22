@@ -212,7 +212,10 @@
     }
     
     try {
-      const existingStudents = await fetch('students.php').then(r => r.json())
+      const r = await fetch('students.php');
+      const rt = await r.text();
+      let existingStudents = [];
+      try { existingStudents = JSON.parse(rt); } catch(e) { throw new Error(rt.substring(0, 200)); }
       if (Array.isArray(existingStudents)) {
         const duplicate = existingStudents.find(s => (s.roll_no || '').toLowerCase() === studentId.toLowerCase())
         if (duplicate) {
