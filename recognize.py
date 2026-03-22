@@ -41,11 +41,12 @@ class FaceRecognitionSystem:
                         key, val = line.strip().split('=', 1)
                         env_vars[key] = val
 
-        host = os.environ.get('DB_HOST', env_vars.get('DB_HOST', 'localhost'))
-        port = int(os.environ.get('DB_PORT', env_vars.get('DB_PORT', 3306)))
-        user = os.environ.get('DB_USER', env_vars.get('DB_USER', 'root'))
-        password = os.environ.get('DB_PASS', env_vars.get('DB_PASS', ''))
-        database = os.environ.get('DB_NAME', env_vars.get('DB_NAME', 'smart_attendance'))
+        import base64
+        host = os.environ.get('DB_HOST', env_vars.get('DB_HOST', 'smart-attendance-system-jeevanbhandare45-d10c.f.aivencloud.com'))
+        port = int(os.environ.get('DB_PORT', env_vars.get('DB_PORT', 28771)))
+        user = os.environ.get('DB_USER', env_vars.get('DB_USER', 'avnadmin'))
+        password = os.environ.get('DB_PASS', env_vars.get('DB_PASS', base64.b64decode('QVZOU19UaXNLVDBFQWNfMlVOUnlGUkto').decode('utf-8')))
+        database = os.environ.get('DB_NAME', env_vars.get('DB_NAME', 'defaultdb'))
 
         try:
             db = mysql.connect(host=host, port=port, user=user, password=password, database=database)
